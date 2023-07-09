@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 type TEmployee = {
   id: number;
@@ -9,15 +10,21 @@ type TEmployee = {
   avatar: string;
 };
 
-const API_URL = `https://reqres.in/api/users/fr`;
+const API_URL = `https://reqres.in/api/users`;
 let isLoading = false;
+let currentPage: number;
 let totalPages: number;
 const employeesList = ref<TEmployee[]>([]);
+
+const router = useRouter();
+const route = useRoute();
 
 const fetchData = async () => {
   try {
     isLoading = true;
-    const res = await fetch(`${API_URL}`);
+    const res = await fetch(
+      `${API_URL}?page=${!currentPage ? (currentPage = 1) : currentPage}`
+    );
     if (!res.ok) throw new Error(res.status.toString());
     const data = await res.json();
     employeesList.value = data.data;
@@ -27,12 +34,28 @@ const fetchData = async () => {
     console.log("Error fetching data: " + error);
   }
 };
-fetchData();
+
+const changePage = (newPage: number) => {
+  router.push({ path: "", query: { page: newPage } });
+};
+
+watch(
+  () => route.query.page,
+  (newPage) => {
+    currentPage = newPage ? +newPage : 1;
+    fetchData();
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
   <main>
     {{ employeesList }}<br />
     {{ totalPages }}<br />
+
+    <button v-for="n in totalPages" :key="n" @click="changePage(n)">
+      Sida {{ n }}
+    </button>
   </main>
 </template>
