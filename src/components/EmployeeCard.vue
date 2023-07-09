@@ -14,7 +14,11 @@ defineProps<IProps>();
       <img :src="avatar" :alt="first_name + ' ' + last_name" />
     </div>
     <h3>{{ first_name }} {{ last_name }}</h3>
-    <a :href="'mailto:' + email">{{ email }}</a>
+    <div>
+      <a :href="'mailto:' + email">
+        <font-awesome-icon icon="fa-solid fa-envelope" /> Skicka e-post</a
+      >
+    </div>
   </article>
 </template>
 
@@ -24,11 +28,12 @@ article {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 250px;
-  background-color: #efefef;
+  width: 280px;
+  background-color: #ffffff;
   padding: 2rem;
   border-radius: 1rem;
   text-align: center;
+  color: black;
 }
 
 img {
