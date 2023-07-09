@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import EmployeeCard from "@/components/EmployeeCard.vue";
 
 type TEmployee = {
   id: number;
@@ -51,8 +52,16 @@ watch(
 
 <template>
   <main>
-    {{ employeesList }}<br />
-    {{ totalPages }}<br />
+    <section class="employees-list">
+      <EmployeeCard
+        v-for="employee in employeesList"
+        :key="employee.id"
+        :first_name="employee.first_name"
+        :last_name="employee.last_name"
+        :email="employee.email"
+        :avatar="employee.avatar"
+      />
+    </section>
 
     <button v-for="n in totalPages" :key="n" @click="changePage(n)">
       Sida {{ n }}
