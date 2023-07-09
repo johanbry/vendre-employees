@@ -40,11 +40,17 @@ const changePage = (newPage: number) => {
   router.push({ path: "", query: { page: newPage } });
 };
 
+const noResult = () => employeesList.value.length < 1 && !isLoading;
+
 watch(
   () => route.query.page,
-  (newPage) => {
+  async (newPage) => {
     currentPage = newPage ? +newPage : 1;
-    fetchData();
+    await fetchData();
+    if (currentPage > totalPages && totalPages > 0) {
+      currentPage = 1;
+      fetchData();
+    }
   },
   { immediate: true }
 );
@@ -55,6 +61,8 @@ watch(
     <h1>Medarbetare</h1>
     <p>Vår största tillgång hos Vendre är våra fantastiska medarbetare.</p>
     <section class="employees-list full-width">
+      <div v-if="isLoading">Laddar...</div>
+      <div v-if="noResult()">Ingen data att visa...</div>
       <EmployeeCard
         v-for="employee in employeesList"
         :key="employee.id"
@@ -87,6 +95,7 @@ main {
   background-image: linear-gradient(-45deg, #45a5ec, #5333ed, #45a5ec);
   padding: 3rem 3rem;
   margin: 3rem 0 2rem 0;
+  color: #fff;
 }
 
 .full-width {
