@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 import EmployeeCard from "@/components/EmployeeCard.vue";
 
 type TEmployee = {
@@ -13,6 +15,7 @@ type TEmployee = {
 
 const API_URL = `https://reqres.in/api/users`;
 let isLoading = false;
+const fullPage = true;
 let currentPage: number;
 let totalPages: number;
 const employeesList = ref<TEmployee[]>([]);
@@ -42,6 +45,8 @@ const changePage = (newPage: number) => {
 
 const noResult = () => employeesList.value.length < 1 && !isLoading;
 
+const onCancel = () => {};
+
 watch(
   () => route.query.page,
   async (newPage) => {
@@ -61,7 +66,15 @@ watch(
     <h1>Medarbetare</h1>
     <p>Vår största tillgång hos Vendre är våra fantastiska medarbetare.</p>
     <section class="employees-list full-width">
-      <div v-if="isLoading">Laddar...</div>
+      <Loading
+        v-model:active="isLoading"
+        :can-cancel="true"
+        :on-cancel="onCancel"
+        :is-full-page="fullPage"
+        :loader="'spinner'"
+        :opacity="0"
+      />
+
       <div v-if="noResult()">Ingen data att visa...</div>
       <EmployeeCard
         v-for="employee in employeesList"
